@@ -186,3 +186,29 @@ Las validaciones testadas cubren:
 - Formatos (regex para email, phone, dates)
 - Tipos de datos (strings, objetos, arrays)
 - Campos obligatorios vs opcionales
+
+### Corrección de Caminos de Mocks (Feedback de Review)
+
+Durante el review del código, se identificó un problema crítico con los caminos de los mocks del Jest:
+
+**Problema Identificado:**
+- El código de la aplicación (`candidateService.ts`) importa los modelos usando: `'../../domain/models/...'`
+- Los mocks en el archivo de tests estaban usando: `'../domain/models/...'`
+- Jest requiere que los caminos de los mocks correspondan **exactamente** a los caminos usados en los imports del código que está siendo testado
+
+**Solución Implementada:**
+
+1. **Actualización de caminos en los mocks:**
+   - Cambiados todos los `jest.mock('../domain/models/...')` a `jest.mock('../../domain/models/...')`
+   - Actualizados los `jest.requireActual()` dentro de cada mock para usar el mismo camino
+
+2. **Configuración de moduleNameMapper en jest.config.js:**
+   ```javascript
+   moduleNameMapper: {
+     '^../../domain/models/(.*)$': '<rootDir>/src/domain/models/$1',
+   },
+   ```
+   Esto permite que Jest resuelva correctamente los módulos cuando los caminos de los mocks corresponden a los caminos usados por el código de la aplicación, no a los caminos relativos del archivo de test.
+
+**Lección Aprendida:**
+Es fundamental que los caminos usados en `jest.mock()` correspondan exactamente a los caminos de importación usados por el código que está siendo testado, independientemente de la ubicación del archivo de test. Esto garantiza que Jest pueda interceptar y aplicar los mocks correctamente.

@@ -37,8 +37,9 @@ jest.mock('@prisma/client', () => {
 });
 
 // Mock de los modelos - simplificado para evitar problemas de TypeScript
-jest.mock('../domain/models/Candidate', () => {
-  const actual = jest.requireActual('../domain/models/Candidate');
+// Usar el mismo camino que el código de la aplicación para que Jest pueda interceptar correctamente
+jest.mock('../../domain/models/Candidate', () => {
+  const actual = jest.requireActual('../../domain/models/Candidate');
   return {
     ...actual,
     Candidate: jest.fn().mockImplementation((data: any) => {
@@ -60,8 +61,8 @@ jest.mock('../domain/models/Candidate', () => {
   };
 });
 
-jest.mock('../domain/models/Education', () => {
-  const actual = jest.requireActual('../domain/models/Education');
+jest.mock('../../domain/models/Education', () => {
+  const actual = jest.requireActual('../../domain/models/Education');
   return {
     ...actual,
     Education: jest.fn().mockImplementation((data: any) => {
@@ -83,8 +84,8 @@ jest.mock('../domain/models/Education', () => {
   };
 });
 
-jest.mock('../domain/models/WorkExperience', () => {
-  const actual = jest.requireActual('../domain/models/WorkExperience');
+jest.mock('../../domain/models/WorkExperience', () => {
+  const actual = jest.requireActual('../../domain/models/WorkExperience');
   return {
     ...actual,
     WorkExperience: jest.fn().mockImplementation((data: any) => {
@@ -107,8 +108,8 @@ jest.mock('../domain/models/WorkExperience', () => {
   };
 });
 
-jest.mock('../domain/models/Resume', () => {
-  const actual = jest.requireActual('../domain/models/Resume');
+jest.mock('../../domain/models/Resume', () => {
+  const actual = jest.requireActual('../../domain/models/Resume');
   return {
     ...actual,
     Resume: jest.fn().mockImplementation((data: any) => {
