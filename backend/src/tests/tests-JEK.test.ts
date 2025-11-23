@@ -18,25 +18,6 @@ class MockPrismaClientInitializationError extends Error {
   }
 }
 
-const mockPrismaClient = {
-  candidate: {
-    create: jest.fn(),
-    update: jest.fn(),
-    findUnique: jest.fn(),
-  },
-  education: {
-    create: jest.fn(),
-    update: jest.fn(),
-  },
-  workExperience: {
-    create: jest.fn(),
-    update: jest.fn(),
-  },
-  resume: {
-    create: jest.fn(),
-  },
-};
-
 jest.mock('@prisma/client', () => {
   const mockClient = {
     candidate: {
@@ -835,6 +816,8 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
           json: jest.fn().mockReturnThis(),
         };
         mockNext = jest.fn();
+        // Reset the shared mock instance between tests
+        mockMulterInstance.single.mockClear();
       });
 
       it('should successfully upload valid PDF file', () => {
@@ -853,11 +836,11 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
 
         mockRequest.file = mockFile;
         
-        // Mock the uploader to call next without error
-        const uploaderFn = jest.fn((req: any, res: any, next: any) => {
-          next();
+        // Mock the uploader to call callback without error
+        const uploaderFn = jest.fn((req: any, res: any, callback: any) => {
+          callback();
         });
-        jest.spyOn(multer(), 'single').mockReturnValue(uploaderFn as any);
+        mockMulterInstance.single.mockReturnValue(uploaderFn);
 
         uploadFile(mockRequest as Request, mockResponse as Response);
 
@@ -884,11 +867,11 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
 
         mockRequest.file = mockFile;
         
-        // Mock the uploader to call next without error
-        const uploaderFn = jest.fn((req: any, res: any, next: any) => {
-          next();
+        // Mock the uploader to call callback without error
+        const uploaderFn = jest.fn((req: any, res: any, callback: any) => {
+          callback();
         });
-        jest.spyOn(multer(), 'single').mockReturnValue(uploaderFn as any);
+        mockMulterInstance.single.mockReturnValue(uploaderFn);
 
         uploadFile(mockRequest as Request, mockResponse as Response);
 
@@ -902,11 +885,11 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
       it('should reject invalid file type', () => {
         mockRequest.file = undefined;
         
-        // Mock the uploader to call next without error (file filter rejects)
-        const uploaderFn = jest.fn((req: any, res: any, next: any) => {
-          next();
+        // Mock the uploader to call callback without error (file filter rejects)
+        const uploaderFn = jest.fn((req: any, res: any, callback: any) => {
+          callback();
         });
-        jest.spyOn(multer(), 'single').mockReturnValue(uploaderFn as any);
+        mockMulterInstance.single.mockReturnValue(uploaderFn);
 
         uploadFile(mockRequest as Request, mockResponse as Response);
 
@@ -1065,6 +1048,7 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
       let mockRequest: Partial<Request>;
       let mockResponse: Partial<Response>;
       let addCandidateSpy: jest.SpyInstance;
+      let routeHandler: (req: Request, res: Response) => Promise<void>;
 
       beforeEach(() => {
         mockRequest = {
@@ -1075,8 +1059,16 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
           send: jest.fn().mockReturnThis(),
         };
         jest.clearAllMocks();
+        
         // Mock the addCandidate function that the route calls
         addCandidateSpy = jest.spyOn(require('../presentation/controllers/candidateController'), 'addCandidate');
+        
+        // Extract the actual route handler from candidateRoutes
+        // The route handler is the function passed to router.post('/', handler)
+        const router = require('../routes/candidateRoutes').default;
+        // Access the route handler from router.stack[0].route.stack[0].handle
+        const route = router.stack.find((layer: any) => layer.route && layer.route.path === '/');
+        routeHandler = route.route.stack[0].handle;
       });
 
       afterEach(() => {
@@ -1089,10 +1081,8 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
 
         mockRequest.body = validCandidateData;
 
-        // Simulate route handler logic: await addCandidate(req.body) and send result
-        const result = await (addCandidateSpy as any)(mockRequest.body);
-        (mockResponse.status as jest.Mock)(201);
-        (mockResponse.send as jest.Mock)(result);
+        // Invoke the actual route handler
+        await routeHandler(mockRequest as Request, mockResponse as Response);
 
         expect(addCandidateSpy).toHaveBeenCalledWith(validCandidateData);
         expect(mockResponse.status).toHaveBeenCalledWith(201);
@@ -1105,16 +1095,10 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
 
         mockRequest.body = { ...validCandidateData, email: 'invalid-email' };
 
-        // Simulate route handler error handling logic
-        try {
-          await (addCandidateSpy as any)(mockRequest.body);
-        } catch (error) {
-          if (error instanceof Error) {
-            (mockResponse.status as jest.Mock)(400);
-            (mockResponse.send as jest.Mock)({ message: error.message });
-          }
-        }
+        // Invoke the actual route handler
+        await routeHandler(mockRequest as Request, mockResponse as Response);
 
+        expect(addCandidateSpy).toHaveBeenCalledWith(mockRequest.body);
         expect(mockResponse.status).toHaveBeenCalledWith(400);
         expect(mockResponse.send).toHaveBeenCalledWith({ message: 'Invalid email' });
       });
@@ -1125,19 +1109,10 @@ describe('Insert Candidate Feature - Unit Tests Suite', () => {
 
         mockRequest.body = validCandidateData;
 
-        // Simulate route handler error handling logic
-        try {
-          await (addCandidateSpy as any)(mockRequest.body);
-        } catch (error) {
-          if (error instanceof Error) {
-            (mockResponse.status as jest.Mock)(400);
-            (mockResponse.send as jest.Mock)({ message: error.message });
-          } else {
-            (mockResponse.status as jest.Mock)(500);
-            (mockResponse.send as jest.Mock)({ message: 'An unexpected error occurred' });
-          }
-        }
+        // Invoke the actual route handler
+        await routeHandler(mockRequest as Request, mockResponse as Response);
 
+        expect(addCandidateSpy).toHaveBeenCalledWith(validCandidateData);
         expect(mockResponse.status).toHaveBeenCalledWith(500);
         expect(mockResponse.send).toHaveBeenCalledWith({ message: 'An unexpected error occurred' });
       });
