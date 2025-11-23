@@ -23,9 +23,9 @@ export class Candidate {
     this.email = data.email;
     this.phone = data.phone;
     this.address = data.address;
-    this.education = data.educations ? [...data.educations] : [];
-    this.workExperience = data.workExperiences ? [...data.workExperiences] : [];
-    this.resumes = data.resumes ? [...data.resumes] : [];
+    this.education = data.educations || [];
+    this.workExperience = data.workExperiences || [];
+    this.resumes = data.resumes || [];
   }
 
   async save() {
