@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "test": "jest --config jest.config.js --passWithNoTests"
+  },
   "dependencies": {
     "dotenv": "^16.4.5"
   },
@@ -6,5 +9,9 @@
     "schema": "backend/prisma/schema.prisma"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
   }
 }

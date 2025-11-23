@@ -4,6 +4,7 @@
 **/.env.example
 **/node_modules
 **/prompts_master.md
+**/backend/.env
 
 # other dependencies
 **/.pnp
