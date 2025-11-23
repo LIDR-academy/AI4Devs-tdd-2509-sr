@@ -382,14 +382,55 @@ Time:        1.484 s
 **Objetivo:** Ejecutar los tests y verificar que todo funciona correctamente.
 
 ```
-[Pendiente - El prompt 5 ya ejecutó y verificó los tests exitosamente]
+I need to run the tests and verify everything works correctly for the Activity 2 submission.
+
+Please complete these tasks:
+
+1. **Run the tests**
+   cd backend
+   npm test
+
+2. **Fix any failing tests or configuration issues**
+   - If tests fail, analyze the error messages
+   - Fix import paths, mock configurations, or test logic as needed
+   - Re-run tests until all pass
+
+3. **Generate test coverage report** (optional but recommended)
+   npm run test:coverage
+
+4. **Verify the test file structure**
+   Confirm that `backend/src/tests/tests-iniciales.test.ts` contains:
+   - Tests for "Form data reception" (validation)
+   - Tests for "Database saving" (with mocks)
+   - At least one passing test in each category
+
+5. **Create the prompts documentation file**
+   Create `prompts/prompts-iniciales.md` with:
+   - All prompts used during this exercise
+   - Brief description of what each prompt accomplished
+   - Any manual adjustments made
+
+6. **Prepare for git submission**
+   Output a summary with:
+   - Total number of tests
+   - Number of passing tests
+   - Test coverage percentage (if available)
+   - List of files created/modified
+   - Git commands needed for submission
 ```
 
 **Resultado:**
-- Todos los 95 tests pasando
+- Todos los **97 tests** pasando (2 tests de setup + 95 tests de candidatos)
 - Cobertura de las dos familias de tests requeridas:
-  - ✅ Recepción de datos del formulario (81 tests de validación)
-  - ✅ Guardado en base de datos (14 tests con mocks)
+  - ✅ Recepción de datos del formulario (85 tests de validación)
+  - ✅ Guardado en base de datos (13 tests con mocks)
+- Reporte de cobertura generado:
+  - **Statements:** 66.32%
+  - **Branches:** 79.2%
+  - **Functions:** 55.81%
+  - **Lines:** 65.49%
+  - **validator.ts:** 100% cobertura
+  - **candidateService.ts:** 100% cobertura
 - Archivos entregables listos
 
 ---
