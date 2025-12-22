@@ -7,13 +7,13 @@ Este repositorio utiliza un flujo de seguridad explícito para trabajar con herr
 - `main` es inmutable
 - `dev-luhz` es la base estable de desarrollo
 - Las ramas `checkpoint/*` nunca deben modificarse
-- Los cambios generados por IA SOLO están permitidos en ramas `test/cursor-*`
+- Los cambios generados por IA SOLO están permitidos en ramas `test/cursor-session-01`
 
 ## Reglas obligatorias
 
 1. Nunca modificar `main`, `dev-luhz` ni `checkpoint/*`
 2. Antes de hacer cualquier cambio, confirmar la rama actual
-3. Si la rama actual NO es `test/cursor-*`, DETENERSE
+3. Si la rama actual NO es `test/cursor-session-01`, DETENERSE
 4. No refactorizar código a menos que se solicite explícitamente
 5. No eliminar archivos a menos que se solicite explícitamente
 6. Mantener los cambios pequeños y bien delimitados
